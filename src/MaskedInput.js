@@ -287,6 +287,7 @@ export default {
     },
 
     focusin(e) {
+      $emit('focus')
     },
 
     isEmpty() {
@@ -295,6 +296,7 @@ export default {
     },
 
     focusout(e) {
+      $emit('focusout')
       if (this.isEmpty()) {
         this.$refs.input.value = ''
         this.mask_core.setSelection({
