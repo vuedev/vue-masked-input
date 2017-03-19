@@ -24,11 +24,13 @@ export default {
 
   name: 'MaskedInput',
 
-  data: () => ({
-    marginLeft: 0,
-    mask_core: null,
-    updateAfterAll: false
-  }),
+  data: function () {
+    return {
+      marginLeft: 0,
+      mask_core: null,
+      updateAfterAll: false
+    }
+  },
 
   props: {
     value: {
@@ -37,12 +39,16 @@ export default {
     mask: {
       type: String,
       required: true,
-      validator:  value => !! (value && value.length >= 1)
+      validator: function (value) {
+        return !!(value && value.length >= 1)
+      }
     },
     placeholderChar: {
       type: String,
       default: '_',
-      validator:  value => !! (value && value.length === 1)
+      validator: function (value) {
+        return !!(value && value.length === 1)
+      }
     },
     disabled: {
       type: Boolean,
@@ -51,10 +57,10 @@ export default {
   },
 
   watch: {
-    mask: function(newMask) {
+    mask: function (newMask) {
       this.initMask()
     },
-    value: function(newValue) {
+    value: function (newValue) {
       if (this.mask_core) this.mask_core.setValue(newValue) //For multiple inputs support
     },
   },
@@ -73,25 +79,39 @@ export default {
           placeholderChar: this.placeholderChar,
           formatCharacters: {
             'a': {
-              validate: char => /^[A-Za-zА-Яа-я]$/.test(char),
+              validate: function (char) {
+                return /^[A-Za-zА-Яа-я]$/.test(char)
+              }
             },
             'A': {
-              validate: char => /^[A-Za-zА-Яа-я]$/.test(char) ,
-              transform: char => char.toUpperCase()
+              validate: function (char) {
+                return /^[A-Za-zА-Яа-я]$/.test(char)
+              },
+              transform: function (char) {
+                return char.toUpperCase()
+              }
             },
             '*': {
-              validate: char => /^[\dA-Za-zА-Яа-я]$/.test(char),
+              validate: function (char) {
+                return /^[\dA-Za-zА-Яа-я]$/.test(char)
+              }
             },
             '#': {
-              validate: char => /^[\dA-Za-zА-Яа-я]$/.test(char),
-              transform: char => char.toUpperCase()
+              validate: function (char) {
+                return /^[\dA-Za-zА-Яа-я]$/.test(char)
+              },
+              transform: function (char) {
+                return char.toUpperCase()
+              }
             },
             '+': {
-              validate: char => true,
+              validate: function (char) {
+                true
+              }
             },
           }
         })
-        for (let i = 0; i < this.$refs.input.value.length; ++i) {
+        for (var i = 0; i < this.$refs.input.value.length; ++i) {
           this.mask_core.input(this.$refs.input.value[i])
         }
         this.mask_core.setSelection({
@@ -149,11 +169,11 @@ export default {
           if (this.$refs.input.selectionStart === this.$refs.input.selectionEnd)
             this.$refs.input.selectionEnd = this.$refs.input.selectionStart--
 
-            this.mask_core.selection = {
-              start: this.$refs.input.selectionStart,
-              end: this.$refs.input.selectionStart
-            }
-            this.updateToCoreState()
+          this.mask_core.selection = {
+            start: this.$refs.input.selectionStart,
+            end: this.$refs.input.selectionStart
+          }
+          this.updateToCoreState()
           break;
 
         //right arrow
@@ -221,9 +241,9 @@ export default {
       if (e.ctrlKey) return; //Fix FF copy/paste issue
       /*
        IE & FF are not trigger textInput event, so we have to force it
-      */
-      let isIE = /*@cc_on!@*/false || !!document.documentMode; //by http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-      let isFirefox = typeof InstallTrigger !== 'undefined';
+       */
+      var isIE = /*@cc_on!@*/false || !!document.documentMode; //by http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+      var isFirefox = typeof InstallTrigger !== 'undefined';
 
 
       if (isIE || isFirefox) {
@@ -251,12 +271,13 @@ export default {
       e.preventDefault();
       if (this.$refs.input.selectionStart !== this.$refs.input.selectionEnd) {
         /*let text = this.$refs.input.value.slice(
-          this.$refs.input.selectionStart,
-          this.$refs.input.selectionEnd
-        )*/
+         this.$refs.input.selectionStart,
+         this.$refs.input.selectionEnd
+         )*/
         try {
           document.execCommand('copy')
-        } catch (err) {}
+        } catch (err) {
+        }
         this.mask_core.backspace()
         this.updateToCoreState()
       }
@@ -267,7 +288,7 @@ export default {
 
     paste(e) {
       e.preventDefault()
-      let text = e.clipboardData.getData('text')
+      var text = e.clipboardData.getData('text')
       for (var i = 0; i < text.length; ++i) {
         this.mask_core.input(text[i])
       }
